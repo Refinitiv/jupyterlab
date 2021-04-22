@@ -79,7 +79,7 @@ export abstract class JupyterFrontEnd<
       options.serviceManager ||
       new ServiceManager({
         standby: () => {
-          return Dialog.tracker.size > 0;
+          return Dialog.tracker.size > 0 || 'when-hidden';
         }
       });
   }

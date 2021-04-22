@@ -113,7 +113,9 @@ export class FileBrowserModel implements IDisposable {
         backoff: true,
         max: 300 * 1000
       },
-      standby: 'when-hidden'
+      standby: () => {
+        return Dialog.tracker.size > 0 || 'when-hidden';
+      }
     });
   }
 
