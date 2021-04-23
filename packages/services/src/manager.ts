@@ -38,7 +38,6 @@ export class ServiceManager implements ServiceManager.IManager {
     const serverSettings =
       options.serverSettings ?? ServerConnection.makeSettings();
 
-    this.bandwidthSaveMode = false;
     const standby =
       options.standby ??
       (() => {
@@ -74,11 +73,6 @@ export class ServiceManager implements ServiceManager.IManager {
       this._isReady = true;
     });
   }
-
-  /**
-   * Periodical HTTP requesting should be paused while this is set to true.
-   */
-  bandwidthSaveMode: boolean;
 
   /**
    * A signal emitted when there is a connection failure with the kernel.
@@ -169,6 +163,17 @@ export class ServiceManager implements ServiceManager.IManager {
     return this._readyPromise;
   }
 
+  /**
+   * Periodical HTTP requesting should be paused while this is set to true.
+   */
+  get bandwidthSaveMode(): boolean {
+    return this._bandwidthSaveMode;
+  }
+
+  set bandwidthSaveMode(value: boolean) {
+    this._bandwidthSaveMode = value;
+  }
+
   private _onConnectionFailure(sender: any, err: Error): void {
     this._connectionFailure.emit(err);
   }
@@ -177,6 +182,7 @@ export class ServiceManager implements ServiceManager.IManager {
   private _readyPromise: Promise<void>;
   private _connectionFailure = new Signal<this, Error>(this);
   private _isReady = false;
+  private _bandwidthSaveMode = false;
 }
 
 /**
