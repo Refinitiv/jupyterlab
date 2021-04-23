@@ -37,7 +37,13 @@ export class ServiceManager implements ServiceManager.IManager {
     const defaultDrive = options.defaultDrive;
     const serverSettings =
       options.serverSettings ?? ServerConnection.makeSettings();
-    const standby = options.standby ?? 'when-hidden';
+
+    this.bandwidthSaveMode = false;
+    const standby =
+      options.standby ??
+      (() => {
+        return this.bandwidthSaveMode || 'when-hidden';
+      });
     const normalized = { defaultDrive, serverSettings, standby };
 
     const kernelManager = new KernelManager(normalized);
@@ -68,6 +74,11 @@ export class ServiceManager implements ServiceManager.IManager {
       this._isReady = true;
     });
   }
+
+  /**
+   * Periodical HTTP requesting should be paused while this is set to true.
+   */
+  bandwidthSaveMode: boolean;
 
   /**
    * A signal emitted when there is a connection failure with the kernel.
@@ -235,6 +246,11 @@ export namespace ServiceManager {
      * A signal emitted when there is a connection failure with the server.
      */
     readonly connectionFailure: ISignal<IManager, Error>;
+
+    /**
+     * Periodical HTTP requesting should be paused while this is set to true.
+     */
+    bandwidthSaveMode: boolean;
   }
 
   /**

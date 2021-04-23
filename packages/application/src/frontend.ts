@@ -1,7 +1,7 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
 
-import { CommandLinker, Dialog } from '@jupyterlab/apputils';
+import { CommandLinker } from '@jupyterlab/apputils';
 
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 
@@ -74,14 +74,7 @@ export abstract class JupyterFrontEnd<
     this.restored =
       options.restored ||
       this.started.then(() => restored).catch(() => restored);
-
-    this.serviceManager =
-      options.serviceManager ||
-      new ServiceManager({
-        standby: () => {
-          return Dialog.tracker.size > 0 || 'when-hidden';
-        }
-      });
+    this.serviceManager = options.serviceManager || new ServiceManager();
   }
 
   /**

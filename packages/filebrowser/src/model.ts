@@ -114,7 +114,7 @@ export class FileBrowserModel implements IDisposable {
         max: 300 * 1000
       },
       standby: () => {
-        return Dialog.tracker.size > 0 || 'when-hidden';
+        return services.bandwidthSaveMode || 'when-hidden';
       }
     });
   }
