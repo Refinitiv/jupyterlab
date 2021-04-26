@@ -164,12 +164,18 @@ export class ServiceManager implements ServiceManager.IManager {
   }
 
   /**
-   * Periodical HTTP requesting should be paused while this is set to true.
+   * Every periodic network polling should be paused while
+   * this is set to true. Extensions should use this value
+   * to decide whether to proceed with the polling.
+   * The extensions may also set this value to true if there is no need
+   * to fetch anything from the server backend basing on some conditions
+   * (e.g. when an error message dialog is displayed).
+   * At the same time, the extensions are responsible for setting
+   * this value back to false.
    */
   get bandwidthSaveMode(): boolean {
     return this._bandwidthSaveMode;
   }
-
   set bandwidthSaveMode(value: boolean) {
     this._bandwidthSaveMode = value;
   }
@@ -254,7 +260,14 @@ export namespace ServiceManager {
     readonly connectionFailure: ISignal<IManager, Error>;
 
     /**
-     * Periodical HTTP requesting should be paused while this is set to true.
+     * Every periodic network polling should be paused while
+     * this is set to true. Extensions should use this value
+     * to decide whether to proceed with the polling.
+     * The extensions may also set this value to true if there is no need
+     * to fetch anything from the server backend basing on some conditions
+     * (e.g. when an error message dialog is displayed).
+     * At the same time, the extensions are responsible for setting
+     * this value back to false.
      */
     bandwidthSaveMode: boolean;
   }
@@ -274,7 +287,7 @@ export namespace ServiceManager {
     readonly defaultDrive?: Contents.IDrive;
 
     /**
-     * When the manager stops polling the API. Defaults to `when-hidden`.
+     * When the manager stops polling the API.
      */
     standby?: Poll.Standby | (() => boolean | Poll.Standby);
   }
