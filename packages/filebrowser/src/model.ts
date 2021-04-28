@@ -113,9 +113,7 @@ export class FileBrowserModel implements IDisposable {
         backoff: true,
         max: 300 * 1000
       },
-      standby: () => {
-        return services.bandwidthSaveMode || 'when-hidden';
-      }
+      standby: 'when-hidden'
     });
   }
 

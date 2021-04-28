@@ -5,8 +5,6 @@ import { IDisposable } from '@lumino/disposable';
 
 import { Signal } from '@lumino/signaling';
 
-import { ServiceManager } from '@jupyterlab/services';
-
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 
 /**
@@ -21,7 +19,6 @@ export class SaveHandler implements IDisposable {
    */
   constructor(options: SaveHandler.IOptions) {
     this._context = options.context;
-    this._services = options.services;
     const interval = options.saveInterval || 120;
     this._minInterval = interval * 1000;
     this._interval = this._minInterval;
@@ -94,9 +91,7 @@ export class SaveHandler implements IDisposable {
       return;
     }
     this._autosaveTimer = window.setTimeout(() => {
-      if (!this._services.bandwidthSaveMode) {
-        this._save();
-      }
+      this._save();
     }, this._interval);
   }
 
@@ -151,7 +146,6 @@ export class SaveHandler implements IDisposable {
   private _minInterval = -1;
   private _interval = -1;
   private _context: DocumentRegistry.Context;
-  private _services: ServiceManager.IManager;
   private _isActive = false;
   private _inDialog = false;
   private _isDisposed = false;
@@ -175,10 +169,5 @@ export namespace SaveHandler {
      * The minimum save interval in seconds (default is two minutes).
      */
     saveInterval?: number;
-
-    /**
-     * A service manager instance.
-     */
-    services: ServiceManager.IManager;
   }
 }

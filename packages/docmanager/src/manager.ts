@@ -485,8 +485,7 @@ export class DocumentManager implements IDocumentManager {
     });
     const handler = new SaveHandler({
       context,
-      saveInterval: this.autosaveInterval,
-      services: this.services
+      saveInterval: this.autosaveInterval
     });
     Private.saveHandlerProperty.set(context, handler);
     void context.ready.then(() => {
