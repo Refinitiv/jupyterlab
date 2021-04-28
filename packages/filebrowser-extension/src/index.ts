@@ -11,7 +11,8 @@ import {
   ITreePathUpdater,
   IRouter,
   JupyterFrontEnd,
-  JupyterFrontEndPlugin
+  JupyterFrontEndPlugin,
+  JupyterLab
 } from '@jupyterlab/application';
 
 import {
@@ -252,12 +253,13 @@ const browser: JupyterFrontEndPlugin<void> = {
 const factory: JupyterFrontEndPlugin<IFileBrowserFactory> = {
   id: '@jupyterlab/filebrowser-extension:factory',
   provides: IFileBrowserFactory,
-  requires: [IDocumentManager, ITranslator],
+  requires: [IDocumentManager, ITranslator, JupyterLab.IInfo],
   optional: [IStateDB, IRouter, JupyterFrontEnd.ITreeResolver],
   activate: async (
     app: JupyterFrontEnd,
     docManager: IDocumentManager,
     translator: ITranslator,
+    info: JupyterLab.IInfo,
     state: IStateDB | null,
     router: IRouter | null,
     tree: JupyterFrontEnd.ITreeResolver | null
@@ -274,6 +276,9 @@ const factory: JupyterFrontEndPlugin<IFileBrowserFactory> = {
         manager: docManager,
         driveName: options.driveName || '',
         refreshInterval: options.refreshInterval,
+        refreshStandby: () => {
+          return info.bandwidthSaveMode || 'when-hidden';
+        },
         state:
           options.state === null
             ? undefined

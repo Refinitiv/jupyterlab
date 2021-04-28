@@ -229,13 +229,13 @@ export namespace JupyterLab {
 
     /**
      * Every periodic network polling should be paused while this is set
-     * to true. Extensions should use this value to decide whether to proceed
+     * to `true`. Extensions should use this value to decide whether to proceed
      * with the polling.
-     * The extensions may also set this value to true if there is no need to
+     * The extensions may also set this value to `true` if there is no need to
      * fetch anything from the server backend basing on some conditions
      * (e.g. when an error message dialog is displayed).
      * At the same time, the extensions are responsible for setting this value
-     * back to false.
+     * back to `false`.
      */
     bandwidthSaveMode: boolean;
   }
