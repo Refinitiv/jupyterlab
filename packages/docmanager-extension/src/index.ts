@@ -151,7 +151,9 @@ const docManagerPlugin: JupyterFrontEndPlugin<IDocumentManager> = {
       setBusy: (status && (() => status.setBusy())) ?? undefined,
       sessionDialogs: sessionDialogs || undefined,
       translator,
-      info: info || undefined
+      bandwidthSaveModeCallback: () => {
+        return info?.bandwidthSaveMode || false;
+      }
     });
 
     // Register the file operations commands.

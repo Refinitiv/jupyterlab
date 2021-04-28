@@ -1,8 +1,6 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
 
-import { JupyterLab } from '@jupyterlab/application';
-
 import { ISessionContext, sessionContextDialogs } from '@jupyterlab/apputils';
 
 import { PathExt } from '@jupyterlab/coreutils';
@@ -51,7 +49,8 @@ export class DocumentManager implements IDocumentManager {
    */
   constructor(options: DocumentManager.IOptions) {
     this.translator = options.translator || nullTranslator;
-    this._info = options.info;
+    this._bandwidthSaveModeCallback =
+      options.bandwidthSaveModeCallback || (() => false);
     this.registry = options.registry;
     this.services = options.manager;
     this._dialogs = options.sessionDialogs || sessionContextDialogs;
@@ -488,7 +487,7 @@ export class DocumentManager implements IDocumentManager {
     });
     const handler = new SaveHandler({
       context,
-      info: this._info,
+      bandwidthSaveModeCallback: this._bandwidthSaveModeCallback,
       saveInterval: this.autosaveInterval
     });
     Private.saveHandlerProperty.set(context, handler);
@@ -612,7 +611,7 @@ export class DocumentManager implements IDocumentManager {
   private _when: Promise<void>;
   private _setBusy: (() => IDisposable) | undefined;
   private _dialogs: ISessionContext.IDialogs;
-  private _info?: JupyterLab.IInfo;
+  private _bandwidthSaveModeCallback: () => boolean;
 }
 
 /**
@@ -659,9 +658,10 @@ export namespace DocumentManager {
     translator?: ITranslator;
 
     /**
-     * The information about the current JupyterLab application.
+     * Autosaving should be paused while this callback function returns `true`.
+     * By default, it always returns `false`.
      */
-    info?: JupyterLab.IInfo;
+    bandwidthSaveModeCallback?: () => boolean;
   }
 
   /**

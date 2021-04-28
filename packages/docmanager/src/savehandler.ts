@@ -5,8 +5,6 @@ import { IDisposable } from '@lumino/disposable';
 
 import { Signal } from '@lumino/signaling';
 
-import { JupyterLab } from '@jupyterlab/application';
-
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 
 /**
@@ -21,7 +19,8 @@ export class SaveHandler implements IDisposable {
    */
   constructor(options: SaveHandler.IOptions) {
     this._context = options.context;
-    this._info = options.info;
+    this._bandwidthSaveModeCallback =
+      options.bandwidthSaveModeCallback || (() => false);
     const interval = options.saveInterval || 120;
     this._minInterval = interval * 1000;
     this._interval = this._minInterval;
@@ -94,7 +93,7 @@ export class SaveHandler implements IDisposable {
       return;
     }
     this._autosaveTimer = window.setTimeout(() => {
-      if (!this._info?.bandwidthSaveMode) {
+      if (!this._bandwidthSaveModeCallback()) {
         this._save();
       }
     }, this._interval);
@@ -151,7 +150,7 @@ export class SaveHandler implements IDisposable {
   private _minInterval = -1;
   private _interval = -1;
   private _context: DocumentRegistry.Context;
-  private _info?: JupyterLab.IInfo;
+  private _bandwidthSaveModeCallback: () => boolean;
   private _isActive = false;
   private _inDialog = false;
   private _isDisposed = false;
@@ -172,9 +171,10 @@ export namespace SaveHandler {
     context: DocumentRegistry.Context;
 
     /**
-     * The information about the current JupyterLab application.
+     * Autosaving should be paused while this callback function returns `true`.
+     * By default, it always returns `false`.
      */
-    info?: JupyterLab.IInfo;
+    bandwidthSaveModeCallback?: () => boolean;
 
     /**
      * The minimum save interval in seconds (default is two minutes).
