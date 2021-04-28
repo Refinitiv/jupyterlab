@@ -253,16 +253,21 @@ const browser: JupyterFrontEndPlugin<void> = {
 const factory: JupyterFrontEndPlugin<IFileBrowserFactory> = {
   id: '@jupyterlab/filebrowser-extension:factory',
   provides: IFileBrowserFactory,
-  requires: [IDocumentManager, ITranslator, JupyterLab.IInfo],
-  optional: [IStateDB, IRouter, JupyterFrontEnd.ITreeResolver],
+  requires: [IDocumentManager, ITranslator],
+  optional: [
+    IStateDB,
+    IRouter,
+    JupyterFrontEnd.ITreeResolver,
+    JupyterLab.IInfo
+  ],
   activate: async (
     app: JupyterFrontEnd,
     docManager: IDocumentManager,
     translator: ITranslator,
-    info: JupyterLab.IInfo,
     state: IStateDB | null,
     router: IRouter | null,
-    tree: JupyterFrontEnd.ITreeResolver | null
+    tree: JupyterFrontEnd.ITreeResolver | null,
+    info: JupyterLab.IInfo | null
   ): Promise<IFileBrowserFactory> => {
     const { commands } = app;
     const tracker = new WidgetTracker<FileBrowser>({ namespace });
@@ -277,7 +282,7 @@ const factory: JupyterFrontEndPlugin<IFileBrowserFactory> = {
         driveName: options.driveName || '',
         refreshInterval: options.refreshInterval,
         refreshStandby: () => {
-          return info.bandwidthSaveMode || 'when-hidden';
+          return info?.bandwidthSaveMode || 'when-hidden';
         },
         state:
           options.state === null

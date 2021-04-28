@@ -128,12 +128,13 @@ const hubExtension: JupyterFrontEndPlugin<void> = {
  */
 const connectionlost: JupyterFrontEndPlugin<IConnectionLost> = {
   id: '@jupyterlab/apputils-extension:connectionlost',
-  requires: [JupyterFrontEnd.IPaths, JupyterLab.IInfo, ITranslator],
+  requires: [JupyterFrontEnd.IPaths, ITranslator],
+  optional: [JupyterLab.IInfo],
   activate: (
     app: JupyterFrontEnd,
     paths: JupyterFrontEnd.IPaths,
-    info: JupyterLab.IInfo,
-    translator: ITranslator
+    translator: ITranslator,
+    info: JupyterLab.IInfo | null
   ): IConnectionLost => {
     const trans = translator.load('jupyterlab');
     const hubPrefix = paths.urls.hubPrefix || '';
@@ -154,8 +155,12 @@ const connectionlost: JupyterFrontEndPlugin<IConnectionLost> = {
       if (showingError) {
         return;
       }
+
       showingError = true;
-      info.bandwidthSaveMode = true;
+      if (info) {
+        info.bandwidthSaveMode = true;
+      }
+
       const result = await showDialog({
         title: trans.__('Server unavailable or unreachable'),
         body: trans.__(
@@ -167,8 +172,12 @@ const connectionlost: JupyterFrontEndPlugin<IConnectionLost> = {
           Dialog.cancelButton({ label: trans.__('Dismiss') })
         ]
       });
-      info.bandwidthSaveMode = false;
+
+      if (info) {
+        info.bandwidthSaveMode = false;
+      }
       showingError = false;
+
       if (result.button.accept) {
         await app.commands.execute(CommandIDs.restart);
       }
