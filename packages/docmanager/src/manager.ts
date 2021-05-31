@@ -5,19 +5,21 @@ import { ISessionContext, sessionContextDialogs } from '@jupyterlab/apputils';
 
 import { PathExt } from '@jupyterlab/coreutils';
 
-import { UUID } from '@lumino/coreutils';
-
 import {
   DocumentRegistry,
   Context,
   IDocumentWidget
 } from '@jupyterlab/docregistry';
 
+import { IDocumentProviderFactory } from '@jupyterlab/docprovider';
+
 import { Contents, Kernel, ServiceManager } from '@jupyterlab/services';
 
 import { nullTranslator, ITranslator } from '@jupyterlab/translation';
 
 import { ArrayExt, find } from '@lumino/algorithm';
+
+import { UUID } from '@lumino/coreutils';
 
 import { IDisposable } from '@lumino/disposable';
 
@@ -53,7 +55,9 @@ export class DocumentManager implements IDocumentManager {
       options.bandwidthSaveModeCallback || (() => false);
     this.registry = options.registry;
     this.services = options.manager;
+    this._collaborative = !!options.collaborative;
     this._dialogs = options.sessionDialogs || sessionContextDialogs;
+    this._docProviderFactory = options.docProviderFactory;
 
     this._opener = options.opener;
     this._when = options.when || options.manager.ready;
@@ -126,6 +130,27 @@ export class DocumentManager implements IDocumentManager {
       }
       handler.saveInterval = value || 120;
     });
+  }
+
+  /**
+   * Whether to prompt to name file on first save.
+   */
+  get nameFileOnSave(): boolean {
+    return this._nameFileOnSave;
+  }
+
+  set nameFileOnSave(value: boolean) {
+    if (this._nameFileOnSave != value) {
+      this._optionChanged.emit({ nameFileOnSave: value });
+    }
+    this._nameFileOnSave = value;
+  }
+
+  /**
+   * A signal emitted when option is changed.
+   */
+  get optionChanged(): Signal<this, Object> {
+    return this._optionChanged;
   }
 
   /**
@@ -419,7 +444,11 @@ export class DocumentManager implements IDocumentManager {
    * a file.
    */
   rename(oldPath: string, newPath: string): Promise<Contents.IModel> {
-    return this.services.contents.rename(oldPath, newPath);
+    return this.services.contents.rename(oldPath, newPath).then(model => {
+      if (model.type == 'notebook' || model.type == 'file') {
+        model.renamed = true;
+      }
+    }) as Promise<Contents.IModel>;
   }
 
   /**
@@ -483,7 +512,9 @@ export class DocumentManager implements IDocumentManager {
       kernelPreference,
       modelDBFactory,
       setBusy: this._setBusy,
-      sessionDialogs: this._dialogs
+      sessionDialogs: this._dialogs,
+      collaborative: this._collaborative,
+      docProviderFactory: this._docProviderFactory
     });
     const handler = new SaveHandler({
       context,
@@ -607,11 +638,15 @@ export class DocumentManager implements IDocumentManager {
   private _widgetManager: DocumentWidgetManager;
   private _isDisposed = false;
   private _autosave = true;
+  private _nameFileOnSave = true;
+  private _optionChanged = new Signal<this, Object>(this);
   private _autosaveInterval = 120;
   private _when: Promise<void>;
   private _setBusy: (() => IDisposable) | undefined;
   private _dialogs: ISessionContext.IDialogs;
   private _bandwidthSaveModeCallback: () => boolean;
+  private _docProviderFactory: IDocumentProviderFactory | undefined;
+  private _collaborative: boolean;
 }
 
 /**
@@ -662,6 +697,17 @@ export namespace DocumentManager {
      * By default, it always returns `false`.
      */
     bandwidthSaveModeCallback?: () => boolean;
+
+    /**
+     * A factory method for the document provider.
+     */
+    docProviderFactory?: IDocumentProviderFactory;
+
+    /**
+     * Whether the context should be collaborative.
+     * If true, the context will connect through yjs_ws_server to share information if possible.
+     */
+    collaborative?: boolean;
   }
 
   /**
