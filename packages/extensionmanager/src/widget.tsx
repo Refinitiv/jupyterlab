@@ -2,12 +2,7 @@
 // Distributed under the terms of the Modified BSD License.
 
 import { JupyterFrontEnd } from '@jupyterlab/application';
-import {
-  Dialog,
-  showDialog,
-  ToolbarButtonComponent,
-  VDomRenderer
-} from '@jupyterlab/apputils';
+import { Dialog, showDialog } from '@jupyterlab/apputils';
 import { ServiceManager } from '@jupyterlab/services';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import {
@@ -23,7 +18,9 @@ import {
   InputGroup,
   jupyterIcon,
   listingsInfoIcon,
-  refreshIcon
+  refreshIcon,
+  ToolbarButtonComponent,
+  VDomRenderer
 } from '@jupyterlab/ui-components';
 import { Message } from '@lumino/messaging';
 import * as React from 'react';
@@ -250,7 +247,7 @@ function ListEntry(props: ListEntry.IProperties): React.ReactElement<any> {
               )}
               onClick={() =>
                 window.open(
-                  'https://jupyterlab.readthedocs.io/en/stable/user/extensions.html'
+                  'https://jupyterlab.readthedocs.io/en/latest/user/extensions.html'
                 )
               }
             />
@@ -266,7 +263,7 @@ function ListEntry(props: ListEntry.IProperties): React.ReactElement<any> {
                 )}
                 onClick={() =>
                   window.open(
-                    'https://jupyterlab.readthedocs.io/en/stable/user/extensions.html'
+                    'https://jupyterlab.readthedocs.io/en/latest/user/extensions.html'
                   )
                 }
               />
@@ -396,11 +393,11 @@ function getPrebuiltUninstallInstruction(
       </p>
       <p>
         <a
-          href="https://jupyterlab.readthedocs.io/en/stable/user/extensions.html"
+          href="https://jupyterlab.readthedocs.io/en/latest/user/extensions.html"
           target="_blank"
           rel="noopener noreferrer"
         >
-          https://jupyterlab.readthedocs.io/en/stable/user/extensions.html
+          https://jupyterlab.readthedocs.io/en/latest/user/extensions.html
         </a>
       </p>
     </div>
@@ -725,7 +722,7 @@ administrator to verify the listings configuration.`)}
           </div>
           <div>
             <a
-              href="https://jupyterlab.readthedocs.io/en/stable/user/extensions.html"
+              href="https://jupyterlab.readthedocs.io/en/latest/user/extensions.html"
               target="_blank"
               rel="noopener noreferrer"
             >

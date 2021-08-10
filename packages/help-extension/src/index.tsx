@@ -11,13 +11,10 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 import {
-  CommandToolbarButton,
   Dialog,
   ICommandPalette,
-  IFrame,
   MainAreaWidget,
   showDialog,
-  Toolbar,
   WidgetTracker
 } from '@jupyterlab/apputils';
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
@@ -25,10 +22,13 @@ import { IMainMenu } from '@jupyterlab/mainmenu';
 import { KernelMessage } from '@jupyterlab/services';
 import { ITranslator } from '@jupyterlab/translation';
 import {
+  CommandToolbarButton,
   copyrightIcon,
+  IFrame,
   jupyterIcon,
   jupyterlabWordmarkIcon,
-  refreshIcon
+  refreshIcon,
+  Toolbar
 } from '@jupyterlab/ui-components';
 import { ReadonlyJSONObject } from '@lumino/coreutils';
 import { Menu } from '@lumino/widgets';
@@ -249,12 +249,12 @@ const resources: JupyterFrontEndPlugin<void> = {
     const resources = [
       {
         text: trans.__('JupyterLab Reference'),
-        url: 'https://jupyterlab.readthedocs.io/en/stable/'
+        url: 'https://jupyterlab.readthedocs.io/en/latest/'
       },
       {
         text: trans.__('JupyterLab FAQ'),
         url:
-          'https://jupyterlab.readthedocs.io/en/stable/getting_started/faq.html'
+          'https://jupyterlab.readthedocs.io/en/latest/getting_started/faq.html'
       },
       {
         text: trans.__('Jupyter Reference'),
